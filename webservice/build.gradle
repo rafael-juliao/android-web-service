@@ -1,0 +1,72 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion Integer.valueOf(compile_sdk_version)
+    buildToolsVersion "${build_tools_version}"
+
+
+    defaultConfig {
+        minSdkVersion Integer.valueOf(min_sdk_version)
+        targetSdkVersion Integer.valueOf(target_sdk_version)
+        versionCode Integer.valueOf(version_code)
+        versionName "${version_name}"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+
+dependencies {
+
+    ///////////////////////////////////////
+    ////////// LOCAL LIBS FOLDER //////////
+    ///////////////////////////////////////
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+
+
+
+    ///////////////////////////////////////
+    /////////// TEST DEPENDENCY ///////////
+    ///////////////////////////////////////
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+
+
+    ///////////////////////////////////////
+    ////////// LIBRARY DEPENDENCY /////////
+    ///////////////////////////////////////
+
+
+    implementation "com.github.rafael-juliao:android-live-model:$android_live_model_version"
+
+
+
+    //Retrofit Library
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+
+    //Ok Http Library
+    api "com.squareup.okhttp3:okhttp:$ok_http_version"
+    api "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
+
+
+    //Gson library
+    api "com.google.code.gson:gson:$google_gson_version"
+}
+
