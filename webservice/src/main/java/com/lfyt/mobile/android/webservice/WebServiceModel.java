@@ -37,8 +37,10 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 	///////////////////////////////////////////////////////////////////////////
 	// Constructor
 	///////////////////////////////////////////////////////////////////////////
-	
-	public WebServiceModel(){
+	WebServiceStateAPI mWebServiceStateAPI;
+
+	public WebServiceModel(WebServiceStateAPI mWebServiceStateAPI){
+		this.mWebServiceStateAPI = mWebServiceStateAPI;
 		Logger.DI(this);
 	}
 	
@@ -65,7 +67,6 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 	 */
 	protected<V> V setupWebService(WebServiceComponent webServiceComponent, final Class<V> service){
 
-		
 		OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
 				
 				//Common Connection Objects
@@ -146,6 +147,11 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 	//Execute async call to the server
 	@CallSuper
 	protected void executeRequest(Call<T> call) {
+
+		if( handleResponse )
+			mWebServiceStateAPI.onRequestExecuted();
+
+
 		post(new WebServiceRequestExecutedEvent(this));
 
 		
@@ -154,12 +160,11 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 		
 		call.enqueue(this);
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
 	
 	
 	
@@ -193,9 +198,14 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 		if(  code >= 200 && code <= 207 ) {
 			onSuccess(code, response.body());
 			post(new WebServiceResponseReceivedEvent(this));
+
+			if( handleResponse ){
+				mWebServiceStateAPI.onRequestResponse();
+			}
+
 			return;
 		}
-		
+
 		
 		onRequestError();
 		
@@ -214,10 +224,13 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 		else{
 			onGenericRequestError();
 		}
-		
-		
+
 		post(new WebServiceErrorEvent(this));
-		
+
+
+		if( handleResponse ){
+			mWebServiceStateAPI.onRequestResponse();
+		}
 	}
 	
 	
@@ -268,9 +281,14 @@ public abstract class WebServiceModel<T extends WebServiceResponse> extends Live
 		else{
 			onRequestFailure(call, error);
 		}
-		
-		
+
+
 		post(new WebServiceErrorEvent(this));
+
+
+		if( handleResponse ){
+			mWebServiceStateAPI.onRequestResponse();
+		}
 	}
 	
 	
