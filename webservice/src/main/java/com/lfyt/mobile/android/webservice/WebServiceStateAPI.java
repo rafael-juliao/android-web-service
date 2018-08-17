@@ -7,7 +7,7 @@ import com.lfyt.mobile.android.log.Logger;
 /**
  * Created by rafaeljuliao on 04/05/18.
  */
-public class WebServiceStateAPI extends LiveModel {
+public abstract class WebServiceStateAPI extends LiveModel {
 
 	/**
 	 * Public constructor
